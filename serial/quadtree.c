@@ -171,6 +171,68 @@ double quadrant_previous(struct quadtree *node) {
   return node->previous;
 }
 
+/* get the value of a quadrant as an average of its children
+   bounding the given direction */
+double quadrant_side_value(struct quadtree *node, char dir) {
+
+  // a leaf?  easy!
+  if (is_leaf_quadrant(node)) return node->value;
+
+  // average the leaf quadrant values from the two children
+  // that bound on the dir side
+  double children_vals = 0.0;
+  switch (dir) {
+  case 'n':
+    children_vals = quadrant_side_value(node->children[0], 'n') +
+      quadrant_side_value(node->children[1], 'n');
+    break;
+  case 's':
+    children_vals = quadrant_side_value(node->children[2], 's') +
+      quadrant_side_value(node->children[3], 's');
+    break;
+  case 'e':
+    children_vals = quadrant_side_value(node->children[1], 'e') +
+      quadrant_side_value(node->children[3], 'e');
+    break;
+  case 'w':
+    children_vals = quadrant_side_value(node->children[0], 'w') +
+      quadrant_side_value(node->children[2], 'w');
+    break;
+  }
+  return children_vals / 2.0;
+}
+
+/* get the previous of a quadrant as an average of its children
+   bounding the given direction */
+double quadrant_side_previous(struct quadtree *node, char dir) {
+
+  // a leaf?  easy!
+  if (is_leaf_quadrant(node)) return node->previous;
+
+  // average the leaf quadrant previouss from the two children
+  // that bound on the dir side
+  double children_vals = 0.0;
+  switch (dir) {
+  case 'n':
+    children_vals = quadrant_side_previous(node->children[0], 'n') +
+      quadrant_side_previous(node->children[1], 'n');
+    break;
+  case 's':
+    children_vals = quadrant_side_previous(node->children[2], 's') +
+      quadrant_side_previous(node->children[3], 's');
+    break;
+  case 'e':
+    children_vals = quadrant_side_previous(node->children[1], 'e') +
+      quadrant_side_previous(node->children[3], 'e');
+    break;
+  case 'w':
+    children_vals = quadrant_side_previous(node->children[0], 'w') +
+      quadrant_side_previous(node->children[2], 'w');
+    break;
+  }
+  return children_vals / 2.0;
+}
+
 /* set the value of a quadrant */
 void quadrant_set_value(struct quadtree *node, double value) {
 

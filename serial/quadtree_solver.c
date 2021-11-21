@@ -25,6 +25,7 @@ static double initial_cond(double x, double y) {
 /* the y=1 boundary condition */
 static double bc_top(double x) {
 
+  if (x < 0.5) return 1-2*x;
   return 0;
 }
 
@@ -37,7 +38,8 @@ static double bc_bottom(double x) {
 /* the x=0 boundary condition */
 static double bc_left(double y) {
 
-  return 2*y;
+  if (y < 0.5) return 0;
+  return 2*(y-0.5);
 }
 
 /* the x=1 boundary condition */
@@ -53,7 +55,7 @@ static double bc_right(double y) {
 */
 static int apply_other_bc(struct quadtree *leaf) {
 
-  if (quadrant_contains(leaf, 0.75, 0.75)) {
+  if (quadrant_contains(leaf, 0.8, 0.2)) {
     quadrant_set_value(leaf, 3);
     quadrant_set_previous(leaf, 3);
     return 1;
@@ -137,7 +139,7 @@ void do_jacobi_iter_phase1(void *data, struct quadtree *leaf) {
   /* look north */
   nbr = neighbor_quadrant(leaf, 'n');
   if (nbr) {
-    north = quadrant_value(nbr);
+    north = quadrant_side_value(nbr, 's');
   }
   else {
     north = bc_top(quadrant_centroid_x(leaf));
@@ -146,7 +148,7 @@ void do_jacobi_iter_phase1(void *data, struct quadtree *leaf) {
   /* look south */
   nbr = neighbor_quadrant(leaf, 's');
   if (nbr) {
-    south = quadrant_value(nbr);
+    south = quadrant_side_value(nbr, 'n');
   }
   else {
     south = bc_bottom(quadrant_centroid_x(leaf));
@@ -155,7 +157,7 @@ void do_jacobi_iter_phase1(void *data, struct quadtree *leaf) {
   /* look west */
   nbr = neighbor_quadrant(leaf, 'w');
   if (nbr) {
-    west = quadrant_value(nbr);
+    west = quadrant_side_value(nbr, 'e');
   }
   else {
     west = bc_left(quadrant_centroid_y(leaf));
@@ -164,7 +166,7 @@ void do_jacobi_iter_phase1(void *data, struct quadtree *leaf) {
   /* look east */
   nbr = neighbor_quadrant(leaf, 'e');
   if (nbr) {
-    east = quadrant_value(nbr);
+    east = quadrant_side_value(nbr, 'w');
   }
   else {
     east = bc_right(quadrant_centroid_y(leaf));
@@ -188,7 +190,7 @@ void do_jacobi_iter_phase2(void *data, struct quadtree *leaf) {
   /* look north */
   nbr = neighbor_quadrant(leaf, 'n');
   if (nbr) {
-    north = quadrant_previous(nbr);
+    north = quadrant_side_previous(nbr, 's');
   }
   else {
     north = bc_top(quadrant_centroid_x(leaf));
@@ -197,7 +199,7 @@ void do_jacobi_iter_phase2(void *data, struct quadtree *leaf) {
   /* look south */
   nbr = neighbor_quadrant(leaf, 's');
   if (nbr) {
-    south = quadrant_previous(nbr);
+    south = quadrant_side_previous(nbr, 'n');
   }
   else {
     south = bc_bottom(quadrant_centroid_x(leaf));
@@ -206,7 +208,7 @@ void do_jacobi_iter_phase2(void *data, struct quadtree *leaf) {
   /* look west */
   nbr = neighbor_quadrant(leaf, 'w');
   if (nbr) {
-    west = quadrant_previous(nbr);
+    west = quadrant_side_previous(nbr, 'e');
   }
   else {
     west = bc_left(quadrant_centroid_y(leaf));
@@ -215,7 +217,7 @@ void do_jacobi_iter_phase2(void *data, struct quadtree *leaf) {
   /* look east */
   nbr = neighbor_quadrant(leaf, 'e');
   if (nbr) {
-    east = quadrant_previous(nbr);
+    east = quadrant_side_previous(nbr, 'w');
   }
   else {
     east = bc_right(quadrant_centroid_y(leaf));

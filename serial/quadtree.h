@@ -56,6 +56,8 @@ extern int quadrant_level(struct quadtree *);
 
 extern double quadrant_value(struct quadtree *);
 extern double quadrant_previous(struct quadtree *);
+extern double quadrant_side_value(struct quadtree *, char dir);
+extern double quadrant_side_previous(struct quadtree *, char dir);
 extern void quadrant_set_value(struct quadtree *, double);
 extern void quadrant_set_previous(struct quadtree *, double);
 
